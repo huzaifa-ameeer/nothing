@@ -41,15 +41,27 @@ export default function Home() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.repeat) return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest("a") &&
+        (event.key === "Enter" || event.key === " ")
+      ) {
+        return;
+      }
+      activate();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Element && event.target.closest("a")) return;
       activate();
     };
 
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("pointerdown", activate);
+    window.addEventListener("pointerdown", onPointerDown);
 
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("pointerdown", activate);
+      window.removeEventListener("pointerdown", onPointerDown);
     };
   }, [activate]);
 
@@ -64,7 +76,7 @@ export default function Home() {
   }, [phase]);
 
   return (
-    <main className="flex min-h-dvh flex-1 cursor-pointer touch-manipulation select-none flex-col items-center justify-center overscroll-none bg-black px-6 text-center font-sans">
+    <main className="relative flex min-h-dvh flex-1 cursor-pointer touch-manipulation select-none flex-col items-center justify-center overscroll-none bg-black px-6 text-center font-sans">
       {phase === "idle" && (
         <p className="stage flex flex-wrap items-center justify-center gap-x-3 gap-y-3 text-[11px] uppercase tracking-[0.3em] text-zinc-500 sm:text-xs md:text-sm">
           <span>Press</span>
@@ -103,6 +115,18 @@ export default function Home() {
           </p>
         </div>
       )}
+
+      <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.25em] text-zinc-600">
+        Ragebaited by{" "}
+        <a
+          href="https://huzaifa-lake.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-zinc-400 underline-offset-4 transition-colors hover:text-zinc-100 hover:underline"
+        >
+          Huzaifa
+        </a>
+      </p>
     </main>
   );
 }
